@@ -5,4 +5,4 @@ html
   body
     ul
       - for post in site.posts.all()
-        li= post.content
+        li!= JSON.stringify(post)

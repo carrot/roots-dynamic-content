@@ -10,14 +10,19 @@
   },
   "main": "index.js",
   "dependencies": {
-    "coffee-script": "1.x.x",
-    "lodash": "2.x.x",
-    "js-yaml": "3.x.x",
-    "when": "2.x.x"
+    "coffee-script": "1.x",
+    "lodash": "2.x",
+    "js-yaml": "3.x",
+    "when": "2.x"
   },
   "devDependencies": {
     "mocha": "*",
-    "should": "*"
+    "should": "*",
+    "glob": "*",
+    "rimraf": "*"
+  },
+  "peerDependencies": {
+    "roots": "3.x"
   },
   "scripts": {
     "test": "mocha"

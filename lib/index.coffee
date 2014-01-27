@@ -56,7 +56,7 @@ class DynamicContent
         if i == folders.length-1
           locals.push(front_matter)
           locals.all = all_fn
-          ctx.file.pointer = locals
+          ctx.file.pointer = locals[locals.length-1]
 
   ###*
    * After a file in the category has been compiled:
@@ -67,7 +67,7 @@ class DynamicContent
   ###
   after_hook = (ctx) ->
     if ctx.category == @fs().category
-      ctx.pointer[0].content = ctx.content
+      ctx.pointer.content = ctx.content
       if ctx.options._render == false then false else true
     else
       true
