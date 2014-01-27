@@ -1,0 +1,8 @@
+doctype html
+html
+  head
+    title testing
+  body
+    ul
+      - for post in site.posts.all()
+        li= post.content

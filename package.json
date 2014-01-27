@@ -1,0 +1,28 @@
+{
+  "name": "roots-dynamic-content",
+  "version": "0.0.0",
+  "author": "Carrot Creative <dev@carrotcreative.com>",
+  "description": "dynamic content functionality for roots",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/carrot/roots-dynamic-content.git"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "coffee-script": "1.x.x",
+    "lodash": "2.x.x",
+    "js-yaml": "3.x.x",
+    "when": "2.x.x"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}
