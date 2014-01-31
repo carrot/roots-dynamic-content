@@ -1,20 +1,30 @@
-# roots-dynamic-content [![npm](https://badge.fury.io/js/roots-dynamic-content.png)](http://badge.fury.io/js/roots-dynamic-content) [![tests](https://travis-ci.org/carrot/roots-dynamic-content.png?branch=master)](https://travis-ci.org/carrot/roots-dynamic-content) [![dependencies](https://david-dm.org/carrot/roots-dynamic-content.png)](https://david-dm.org/carrot/roots-dynamic-content)
+Roots Dynamic Content
+=====================
 
-dynamic content functionality for roots
+[![npm](https://badge.fury.io/js/roots-dynamic-content.png)](http://badge.fury.io/js/roots-dynamic-content) [![tests](https://travis-ci.org/carrot/roots-dynamic-content.png?branch=master)](https://travis-ci.org/carrot/roots-dynamic-content) [![dependencies](https://david-dm.org/carrot/roots-dynamic-content.png)](https://david-dm.org/carrot/roots-dynamic-content)
+
+Dynamic content functionality for roots
 
 > **Note:** This project is in early development, and versioning is a little different. [Read this](http://markup.im/#q4_cRZ1Q) for more details.
 
-### Why should you care?
-
-Write about what this project means.
-
 ### Installation
 
-Instructions on how to install.
+- make sure you are in your roots project directory
+- `npm install dynamic-content --save`
+- modify your `app.coffee` file to include the extension, as such
+  
+  ```coffee
+  DynamicContent = require('dynamic-content')
+
+  module.exports =
+    extensions: [new DynamicContent]
+    
+    # everything else...
+  ```
 
 ### Usage
 
-How to use this project.
+Please see the [documentation](docs) for an overview of the functionality.
 
 ### License & Contributing
 

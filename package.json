@@ -1,9 +1,10 @@
 {
-  "name": "roots-dynamic-content",
-  "version": "0.0.0",
+  "name": "dynamic-content",
+  "version": "0.0.1",
   "author": "Carrot Creative <dev@carrotcreative.com>",
   "description": "dynamic content functionality for roots",
   "license": "MIT",
+  "keywords": ["roots-extension", "dynamic content"],
   "repository": {
     "type": "git",
     "url": "https://github.com/carrot/roots-dynamic-content.git"
@@ -19,7 +20,8 @@
     "mocha": "*",
     "should": "*",
     "glob": "*",
-    "rimraf": "*"
+    "rimraf": "*",
+    "roots": "3.x"
   },
   "peerDependencies": {
     "roots": "3.x"
