@@ -18,6 +18,12 @@ class DynamicContent
 
   # @api private
   
+  ###*
+   * Read the first three bytes of each file, if they are '---', assume
+   * that we're working with dynamic content.
+   * @param  {String} file - path to file
+   * @return {Boolean}       promise returning true or false
+  ###
   detect_fn = (file) ->
     deferred = W.defer()
     res = false
@@ -38,25 +44,35 @@ class DynamicContent
    * @param  {Object} ctx - roots context
   ###
   before_hook = (ctx) ->
+    # if category is dynamic and last pass
     if ctx.file.category == @fs().category && ctx.index == ctx.file.adapters.length
+
+      # pull the front matter, remove it from the content
       front_matter_str = ctx.content.match(/^---\s*\n([\s\S]*?)\n?---\s*\n?/)
       front_matter = yaml.safeLoad(front_matter_str[1])
       ctx.content = ctx.content.replace(front_matter_str[0], '')
 
+      # get categories and per-compile locals, add site key and make sure it's defined
       folders = path.dirname(ctx.file.path).replace(ctx.file.roots.root, '').slice(1).split(path.sep)
-      locals = ctx.file.options
+      locals = ctx.file.compile_options.site ?= {}
+      file_locals = ctx.file.file_options
 
-      # add categories hidden key
+      # add special keys for url and categories
       front_matter._categories = folders
+      front_matter._url = ctx.file.roots.config.out(ctx.file.path, ctx.adapter.output).replace(ctx.file.roots.config.output_path(), '')
 
       # deep nested dynamic content
+      # - make sure the backtraced path to a deep-nested folder exists
+      # - push the front matter to the folder name array/object
+      # - add special 'all' function to the array/object
+      # - save a pointer to the front matter object under file-specific `post` local
       for f, i in folders
         locals[f] ?= []
         locals = locals[f]
         if i == folders.length-1
           locals.push(front_matter)
           locals.all = all_fn
-          ctx.file.pointer = locals[locals.length-1]
+          file_locals.post = locals[locals.length-1]
 
   ###*
    * After a file in the category has been compiled:
@@ -66,15 +82,19 @@ class DynamicContent
    * @return {Boolean}
   ###
   after_hook = (ctx) ->
-    if ctx.category == @fs().category
-      ctx.pointer.content = ctx.content
-      if ctx.options._render == false then false else true
-    else
-      true
+    if ctx.category != @fs().category then return true
+    locals = ctx.file_options.post
+
+    # put rendered content into the locals unless _content key is false
+    locals.content = ctx.content unless locals._content == false
+
+    # if _render key is false, return false to not write the file
+    if locals._render == false then false else true
 
   ###*
-   * returns a folder's content and the content of all nested
-   * folders, flattened out
+   * returns an array of all the dynamic conteent object in the folder
+   * it was called on, as well as every folder nested under it, flattened
+   * into a single array.
    * @return {Array} Array of dynamic content objects
   ###
   all_fn = ->
