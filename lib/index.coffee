@@ -28,7 +28,7 @@ class DynamicContent
     deferred = W.defer()
     res = false
 
-    fs.createReadStream(file, { encoding: 'utf-8', start: 0, end: 3 })
+    fs.createReadStream(file.path, { encoding: 'utf-8', start: 0, end: 3 })
       .on('error', deferred.reject)
       .on('end', -> deferred.resolve(res))
       .on 'data', (data) ->
