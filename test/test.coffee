@@ -3,7 +3,11 @@ fs     = require 'fs'
 should = require 'should'
 glob   = require 'glob'
 rimraf = require 'rimraf'
+run    = require('child_process').exec
 Roots  = require 'roots'
+W      = require 'when'
+nodefn = require 'when/node/function'
+_path  = path.join(__dirname, 'fixtures')
 
 should.file_exist = (path) ->
   fs.existsSync(path).should.be.ok
@@ -11,10 +15,22 @@ should.file_exist = (path) ->
 should.have_content = (path) ->
   fs.readFileSync(path).length.should.be.above(1)
 
+before (done) ->
+  tasks = []
+  for d in glob.sync("#{_path}/*/package.json")
+    p = path.dirname(d)
+    if fs.existsSync(path.join(p, 'node_modules')) then continue
+    console.log "installing deps for #{d}"
+    tasks.push nodefn.call(run, "cd #{p}; npm install")
+  W.all(tasks, -> done())
+
+after ->
+  rimraf.sync(public_dir) for public_dir in glob.sync('test/fixtures/**/public')
+
 describe 'dynamic content', ->
 
   before (done) ->
-    @path = path.join(__dirname, 'fixtures/basic')
+    @path = path.join(_path, 'basic')
     @public = path.join(@path, 'public')
     project = new Roots(@path)
     project.compile()
@@ -70,6 +86,3 @@ describe 'dynamic content', ->
     @index[4]._categories[0].should.eql 'posts'
     @index[4]._categories[1].should.eql 'nested'
     @index[4]._categories[2].should.eql 'double-nested'
-
-after ->
-  rimraf.sync(public_dir) for public_dir in glob.sync('test/fixtures/**/public')
