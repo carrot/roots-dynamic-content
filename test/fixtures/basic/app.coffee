@@ -1,9 +1,9 @@
-DynamicContent = require '../../..'
+dynamic_content = require '../../..'
 
 module.exports =
   ignores: ["**/_*"]
 
-  extensions: [new DynamicContent]
+  extensions: [dynamic_content()]
 
   jade:
     pretty: true
