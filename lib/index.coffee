@@ -12,7 +12,6 @@ module.exports = ->
       @category = 'dynamic'
 
     fs: ->
-      category: @category
       extract: true
       ordered: true
       detect: detect_fn
@@ -56,8 +55,8 @@ module.exports = ->
     ###
 
     before_hook = (ctx) ->
-      # if category is dynamic and last pass
-      if ctx.file.category == @category && ctx.index == ctx.file.adapters.length
+      # if  last pass
+      if ctx.index == ctx.file.adapters.length
         f = ctx.file
         roots = f.roots
 
@@ -99,8 +98,6 @@ module.exports = ->
     ###
 
     after_hook = (ctx) ->
-      if ctx.category != @category then return
-
       locals = ctx.file_options.post
       locals.content = ctx.content unless locals._content == false
 
@@ -113,9 +110,7 @@ module.exports = ->
     ###
 
     write_hook = (ctx) ->
-      if ctx.category != @category then return true
-      if ctx.file_options.post._render == false then return false
-      true
+      !(ctx.file_options.post._render == false)
 
     ###*
      * Returns an array of all the dynamic conteent object in the folder
