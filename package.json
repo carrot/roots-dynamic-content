@@ -17,14 +17,12 @@
     "coffee-script": "1.x",
     "lodash": "2.x",
     "js-yaml": "3.x",
-    "when": "2.x",
+    "when": "3.x",
     "roots-util": "0.0.4"
   },
   "devDependencies": {
     "mocha": "*",
     "should": "*",
-    "glob": "*",
-    "rimraf": "*",
     "roots": "3.x"
   },
   "peerDependencies": {
