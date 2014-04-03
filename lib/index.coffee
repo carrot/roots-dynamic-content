@@ -56,7 +56,7 @@ module.exports = ->
     ###
 
     before_hook = (ctx) ->
-      # if  last pass
+      # if last pass
       if ctx.index == ctx.file.adapters.length
         f = ctx.file
         roots = f.roots
