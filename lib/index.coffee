@@ -1,9 +1,9 @@
 path = require 'path'
-fs = require 'fs'
-_ = require 'lodash'
+fs   = require 'fs'
+os   = require 'os'
+_    = require 'lodash'
 yaml = require 'js-yaml'
-W = require 'when'
-os = require 'os'
+W    = require 'when'
 
 module.exports = ->
 

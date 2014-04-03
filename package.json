@@ -12,18 +12,18 @@
     "type": "git",
     "url": "https://github.com/carrot/roots-dynamic-content.git"
   },
-  "main": "index.js",
+  "main": "lib",
   "dependencies": {
-    "coffee-script": "1.x",
     "lodash": "2.x",
     "js-yaml": "3.x",
-    "when": "3.x",
-    "roots-util": "0.0.4"
+    "when": "3.x"
   },
   "devDependencies": {
+    "coffee-script": "1.7.x",
     "mocha": "*",
     "should": "*",
-    "roots": "3.x"
+    "roots": "3.x",
+    "roots-util": "0.0.4"
   },
   "peerDependencies": {
     "roots": "3.x"
