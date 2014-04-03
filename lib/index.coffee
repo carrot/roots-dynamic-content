@@ -3,6 +3,7 @@ fs = require 'fs'
 _ = require 'lodash'
 yaml = require 'js-yaml'
 W = require 'when'
+os = require 'os'
 
 module.exports = ->
 
@@ -26,7 +27,7 @@ module.exports = ->
      * that we're working with dynamic content.
      *
      * @private
-     * 
+     *
      * @param  {File} file - vinyl-wrapped file instance
      * @return {Boolean} promise returning true or false
     ###
@@ -39,7 +40,7 @@ module.exports = ->
         .on('error', deferred.reject)
         .on('end', -> deferred.resolve(res))
         .on 'data', (data) ->
-          if data.split('\n')[0] == "---" then res = true
+          if data.split(os.EOL.substring(0,1))[0] == "---" then res = true
 
       return deferred.promise
 
@@ -50,7 +51,7 @@ module.exports = ->
      * - add an "all" utility function to each level
      *
      * @private
-     * 
+     *
      * @param  {Object} ctx - roots context
     ###
 
@@ -61,7 +62,9 @@ module.exports = ->
         roots = f.roots
 
         # pull the front matter, remove it from the content
-        front_matter_str = ctx.content.match(/^---\s*\n([\s\S]*?)\n?---\s*\n?/)
+        br = "\\#{os.EOL}" # cross-platform newline
+        regex = new RegExp("^---\s*#{br}([\\s\\S]*?)#{br}?---\s*#{br}?")
+        front_matter_str = ctx.content.match(regex)
         front_matter = yaml.safeLoad(front_matter_str[1])
         ctx.content = ctx.content.replace(front_matter_str[0], '')
 
@@ -92,7 +95,7 @@ module.exports = ->
      * adds it to the locals object unless _content key is false
      *
      * @private
-     * 
+     *
      * @param  {Object} ctx - roots context
      * @return {Boolean}
     ###
@@ -104,7 +107,7 @@ module.exports = ->
     ###*
      * If a dynamic file has `_render` set to false in the locals, don't write
      * the file. Otherwise write as usual.
-     * 
+     *
      * @param  {Object} ctx - roots context
      * @return {Boolean} whether or not to write the file as usual
     ###
@@ -118,7 +121,7 @@ module.exports = ->
      * into a single array.
      *
      * @private
-     * 
+     *
      * @return {Array} Array of dynamic content objects
     ###
 
