@@ -1,10 +1,13 @@
 {
   "name": "dynamic-content",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Carrot Creative <dev@carrotcreative.com>",
   "description": "dynamic content functionality for roots",
   "license": "MIT",
-  "keywords": ["roots-extension", "dynamic content"],
+  "keywords": [
+    "roots-extension",
+    "dynamic content"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/carrot/roots-dynamic-content.git"
