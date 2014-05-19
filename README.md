@@ -1,7 +1,7 @@
 Roots Dynamic Content
 =====================
 
-[![npm](https://badge.fury.io/js/dynamic-content.png)](http://badge.fury.io/js/dynamic-content) [![tests](https://travis-ci.org/carrot/roots-dynamic-content.png?branch=master)](https://travis-ci.org/carrot/roots-dynamic-content) [![dependencies](https://david-dm.org/carrot/roots-dynamic-content.png?theme=shields.io)](https://david-dm.org/carrot/roots-dynamic-content)
+[![npm](http://img.shields.io/npm/v/dynamic-content.svg?style=flat)](http://badge.fury.io/js/dynamic-content) [![tests](http://img.shields.io/travis/carrot/roots-dynamic-content/master.svg?style=flat)](https://travis-ci.org/carrot/roots-dynamic-content) [![dependencies](http://img.shields.io/gemnasium/carrot/roots-dynamic-content.svg?style=flat)](https://david-dm.org/carrot/roots-dynamic-content)
 
 Dynamic content functionality for roots
 
@@ -10,15 +10,15 @@ Dynamic content functionality for roots
 ### Installation
 
 - make sure you are in your roots project directory
-- `npm install dynamic-content --save`
+- `npm i dynamic-content -S`
 - modify your `app.coffee` file to include the extension, as such
-  
+
   ```coffee
-  DynamicContent = require('dynamic-content')
+  dynamic_content = require 'dynamic-content'
 
   module.exports =
-    extensions: [new DynamicContent]
-    
+    extensions: [dynamic_content()]
+
     # everything else...
   ```
 
