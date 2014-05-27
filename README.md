@@ -1,7 +1,7 @@
 Roots Dynamic Content
 =====================
 
-[![npm](http://img.shields.io/npm/v/dynamic-content.svg?style=flat)](http://badge.fury.io/js/dynamic-content) [![tests](http://img.shields.io/travis/carrot/roots-dynamic-content/master.svg?style=flat)](https://travis-ci.org/carrot/roots-dynamic-content) [![dependencies](http://img.shields.io/gemnasium/carrot/roots-dynamic-content.svg?style=flat)](https://david-dm.org/carrot/roots-dynamic-content)
+[![npm](http://img.shields.io/npm/v/dynamic-content.svg?style=flat)](http://badge.fury.io/js/dynamic-content) [![tests](http://img.shields.io/travis/carrot/roots-dynamic-content/master.svg?style=flat)](https://travis-ci.org/carrot/roots-dynamic-content) [![coverage](http://img.shields.io/coveralls/carrot/roots-dynamic-content.svg?style=flat)](https://coveralls.io/r/carrot/roots-dynamic-content) [![dependencies](http://img.shields.io/gemnasium/carrot/roots-dynamic-content.svg?style=flat)](https://david-dm.org/carrot/roots-dynamic-content)
 
 Dynamic content functionality for roots
 
