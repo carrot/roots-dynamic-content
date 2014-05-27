@@ -68,20 +68,22 @@ module.exports = ->
         front_matter = yaml.safeLoad(front_matter_str[1])
         ctx.content = ctx.content.replace(front_matter_str[0], '')
 
-        # get categories and per-compile locals, add site key and make sure it's defined
+        # get categories and per-compile locals, add site key and make sure it's
+        # defined
         folders = path.dirname(f.file.relative).split(path.sep)
         locals = f.compile_options.site ?= {}
         file_locals = f.file_options
 
         # add special keys for url and categories
         front_matter._categories = folders
-        front_matter._url = roots.config.out(f.file, ctx.adapter.output).replace(roots.config.output_path(), '')
+        front_matter._url = roots.config.out(f.file, ctx.adapter.output)
+                              .replace(roots.config.output_path(), '')
 
         # deep nested dynamic content
         # - make sure the backtraced path to a deep-nested folder exists
         # - push the front matter to the folder name array/object
         # - add special 'all' function to the array/object
-        # - save a pointer to the front matter object under file-specific `post` local
+        # - save pointer to the front matter obj under file-specific post local
         for f, i in folders
           locals[f] ?= []
           locals = locals[f]
