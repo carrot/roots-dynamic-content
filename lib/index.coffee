@@ -68,8 +68,7 @@ module.exports = ->
         front_matter = yaml.safeLoad(front_matter_str[1])
         ctx.content = ctx.content.replace(front_matter_str[0], '')
 
-        # get categories and per-compile locals, add site key and make sure it's
-        # defined
+        # get categories and per-compile locals, add or define site key
         folders = path.dirname(f.file.relative).split(path.sep)
         locals = f.compile_options.site ?= {}
         file_locals = f.file_options
