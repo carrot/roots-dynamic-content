@@ -30,7 +30,7 @@ describe 'dynamic content', ->
       done()
 
   it 'should compile all files', ->
-    @json.length.should.equal(6)
+    @json.length.should.equal(7)
 
     path1 = path.join(@public, 'index.html')
     h.file.exists(path1).should.be.ok
@@ -86,3 +86,8 @@ describe 'dynamic content', ->
     z._categories[0].should.eql 'posts'
     z._categories[1].should.eql 'nested'
     z._categories[2].should.eql 'double-nested'
+
+  it 'should make all front matter available as locals', ->
+    p = path.join(_path, @public, 'posts/locals_test.html')
+    content = JSON.parse(fs.readFileSync(p, 'utf8'))
+    content.post.wow.should.eql('amaze')
