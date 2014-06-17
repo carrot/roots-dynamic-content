@@ -96,7 +96,7 @@ This will prevent the file from rendering and writing, since we don't need a sin
 
 ### Single Post Views
 
-Ok, so this is looking good so far, but what happens when you want to click into a blog post rather than just displaying it on the index? For this, we need a url and a layout. We can solve this quickly using jade layouts and the special `post.url` property. In the body of the file, rather than the single markdown line, we'll also include the `extends` and `block` directives, remove the `content` print on the index page, and add a link to the title pointing to `post.url`. Let's take a look, first at the modified post (assuming you have set up a layout already):
+Ok, so this is looking good so far, but what happens when you want to click into a blog post rather than just displaying it on the index? For this, we need a url and a layout. We can solve this quickly using jade layouts and the special `post._url` property. In the body of the file, rather than the single markdown line, we'll also include the `extends` and `block` directives, remove the `content` print on the index page, and add a link to the title pointing to `post._url`. Let's take a look, first at the modified post (assuming you have set up a layout already):
 
 ```jade
 ---
