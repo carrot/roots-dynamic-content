@@ -5,132 +5,131 @@ _    = require 'lodash'
 yaml = require 'js-yaml'
 W    = require 'when'
 
-module.exports = ->
+class DynamicContent
+  constructor: ->
+    @category = 'dynamic'
 
-  class DynamicContent
+  fs: ->
+    extract: true
+    ordered: true
+    detect: detect_fn
 
-    constructor: ->
-      @category = 'dynamic'
+  compile_hooks: ->
+    before_pass: before_hook.bind(@)
+    after_file: after_hook.bind(@)
+    write: write_hook.bind(@)
 
-    fs: ->
-      extract: true
-      ordered: true
-      detect: detect_fn
+  ###*
+   * Read the first three bytes of each file, if they are '---', assume
+   * that we're working with dynamic content.
+   *
+   * @private
+   *
+   * @param  {File} file - vinyl-wrapped file instance
+   * @return {Boolean} promise returning true or false
+  ###
 
-    compile_hooks: ->
-      before_pass: before_hook.bind(@)
-      after_file: after_hook.bind(@)
-      write: write_hook.bind(@)
+  detect_fn = (file) ->
+    deferred = W.defer()
+    res = false
 
-    ###*
-     * Read the first three bytes of each file, if they are '---', assume
-     * that we're working with dynamic content.
-     *
-     * @private
-     *
-     * @param  {File} file - vinyl-wrapped file instance
-     * @return {Boolean} promise returning true or false
-    ###
+    fs.createReadStream(file.path, encoding: 'utf-8', start: 0, end: 3)
+      .on('error', deferred.reject)
+      .on('end', -> deferred.resolve(res))
+      .on 'data', (data) ->
+        if data.split(os.EOL.substring(0,1))[0] is '---' then res = true
 
-    detect_fn = (file) ->
-      deferred = W.defer()
-      res = false
+    return deferred.promise
 
-      fs.createReadStream(file.path, { encoding: 'utf-8', start: 0, end: 3 })
-        .on('error', deferred.reject)
-        .on('end', -> deferred.resolve(res))
-        .on 'data', (data) ->
-          if data.split(os.EOL.substring(0,1))[0] == "---" then res = true
+  ###*
+   * For dynamic files before the last compile pass:
+   * - remove the front matter, parse into an object
+   * - add the object to the locals, nesting as deep as the folder it's in
+   * - add an "all" utility function to each level
+   *
+   * @private
+   *
+   * @param  {Object} ctx - roots context
+  ###
 
-      return deferred.promise
+  before_hook = (ctx) ->
+    # if last pass
+    if ctx.index is ctx.file.adapters.length
+      f = ctx.file
+      roots = f.roots
 
-    ###*
-     * For dynamic files before the last compile pass:
-     * - remove the front matter, parse into an object
-     * - add the object to the locals, nesting as deep as the folder it's in
-     * - add an "all" utility function to each level
-     *
-     * @private
-     *
-     * @param  {Object} ctx - roots context
-    ###
+      # pull the front matter, remove it from the content
+      br = "\\#{os.EOL}" # cross-platform newline
+      regex = new RegExp(///^---\s*#{br}([\s\S]*?)#{br}?---\s*#{br}?///)
+      front_matter_str = ctx.content.match(regex)
+      front_matter = yaml.safeLoad(front_matter_str[1])
+      ctx.content = ctx.content.replace(front_matter_str[0], '')
 
-    before_hook = (ctx) ->
-      # if last pass
-      if ctx.index == ctx.file.adapters.length
-        f = ctx.file
-        roots = f.roots
+      # get categories and per-compile locals, add or define site key
+      folders = path.dirname(f.file.relative).split(path.sep)
+      locals = f.compile_options.site ?= {}
+      file_locals = f.file_options
 
-        # pull the front matter, remove it from the content
-        br = "\\#{os.EOL}" # cross-platform newline
-        regex = new RegExp("^---\s*#{br}([\\s\\S]*?)#{br}?---\s*#{br}?")
-        front_matter_str = ctx.content.match(regex)
-        front_matter = yaml.safeLoad(front_matter_str[1])
-        ctx.content = ctx.content.replace(front_matter_str[0], '')
+      # add special keys for url and categories
+      front_matter._categories = folders
+      front_matter._url = roots.config.out(f.file, ctx.adapter.output)
+                            .replace(roots.config.output_path(), '')
 
-        # get categories and per-compile locals, add or define site key
-        folders = path.dirname(f.file.relative).split(path.sep)
-        locals = f.compile_options.site ?= {}
-        file_locals = f.file_options
+      # deep nested dynamic content
+      # - make sure the backtraced path to a deep-nested folder exists
+      # - push the front matter to the folder name array/object
+      # - add special 'all' function to the array/object
+      # - save pointer to the front matter obj under file-specific post local
+      for f, i in folders
+        locals[f] ?= []
+        locals = locals[f]
+        if i is folders.length - 1
+          locals.push(front_matter)
+          locals.all = all_fn
+          file_locals.post = locals[locals.length - 1]
 
-        # add special keys for url and categories
-        front_matter._categories = folders
-        front_matter._url = roots.config.out(f.file, ctx.adapter.output)
-                              .replace(roots.config.output_path(), '')
+  ###*
+   * After a file in the category has been compiled, grabs the content and
+   * adds it to the locals object unless _content key is false
+   *
+   * @private
+   *
+   * @param  {Object} ctx - roots context
+   * @return {Boolean}
+  ###
 
-        # deep nested dynamic content
-        # - make sure the backtraced path to a deep-nested folder exists
-        # - push the front matter to the folder name array/object
-        # - add special 'all' function to the array/object
-        # - save pointer to the front matter obj under file-specific post local
-        for f, i in folders
-          locals[f] ?= []
-          locals = locals[f]
-          if i == folders.length-1
-            locals.push(front_matter)
-            locals.all = all_fn
-            file_locals.post = locals[locals.length-1]
+  after_hook = (ctx) ->
+    locals = ctx.file_options.post
+    locals.content = ctx.content unless locals._content is false
 
-    ###*
-     * After a file in the category has been compiled, grabs the content and
-     * adds it to the locals object unless _content key is false
-     *
-     * @private
-     *
-     * @param  {Object} ctx - roots context
-     * @return {Boolean}
-    ###
+  ###*
+   * If a dynamic file has `_render` set to false in the locals, don't write
+   * the file. Otherwise write as usual.
+   *
+   * @param  {Object} ctx - roots context
+   * @return {Boolean} whether or not to write the file as usual
+  ###
 
-    after_hook = (ctx) ->
-      locals = ctx.file_options.post
-      locals.content = ctx.content unless locals._content == false
+  write_hook = (ctx) ->
+    ctx.file_options.post._render isnt false
 
-    ###*
-     * If a dynamic file has `_render` set to false in the locals, don't write
-     * the file. Otherwise write as usual.
-     *
-     * @param  {Object} ctx - roots context
-     * @return {Boolean} whether or not to write the file as usual
-    ###
+  ###*
+   * Returns an array of all the dynamic content object in the folder
+   * it was called on, as well as every folder nested under it, flattened
+   * into a single array.
+   *
+   * @private
+   *
+   * @return {Array} Array of dynamic content objects
+  ###
 
-    write_hook = (ctx) ->
-      !(ctx.file_options.post._render == false)
+  all_fn = ->
+    values = []
+    recurse = (obj) ->
+      for o in Object.keys(obj)
+        if not isNaN(parseInt(o)) then values.push(obj[o]); continue
+        recurse(obj[o])
+    recurse(this)
+    values
 
-    ###*
-     * Returns an array of all the dynamic conteent object in the folder
-     * it was called on, as well as every folder nested under it, flattened
-     * into a single array.
-     *
-     * @private
-     *
-     * @return {Array} Array of dynamic content objects
-    ###
-
-    all_fn = ->
-      values = []
-      recurse = (obj) ->
-        for o in Object.keys(obj)
-          if not isNaN(parseInt(o)) then values.push(obj[o]); continue
-          recurse(obj[o])
-      recurse(this)
-      values
+module.exports = -> DynamicContent
