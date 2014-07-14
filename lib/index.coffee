@@ -8,7 +8,6 @@ W    = require 'when'
 module.exports = ->
 
   class DynamicContent
-
     constructor: ->
       @category = 'dynamic'
 
@@ -36,11 +35,11 @@ module.exports = ->
       deferred = W.defer()
       res = false
 
-      fs.createReadStream(file.path, { encoding: 'utf-8', start: 0, end: 3 })
+      fs.createReadStream(file.path, encoding: 'utf-8', start: 0, end: 3)
         .on('error', deferred.reject)
         .on('end', -> deferred.resolve(res))
         .on 'data', (data) ->
-          if data.split(os.EOL.substring(0,1))[0] == "---" then res = true
+          if data.split(os.EOL.substring(0,1))[0] is '---' then res = true
 
       return deferred.promise
 
@@ -57,13 +56,13 @@ module.exports = ->
 
     before_hook = (ctx) ->
       # if last pass
-      if ctx.index == ctx.file.adapters.length
+      if ctx.index is ctx.file.adapters.length
         f = ctx.file
         roots = f.roots
 
         # pull the front matter, remove it from the content
         br = "\\#{os.EOL}" # cross-platform newline
-        regex = new RegExp("^---\s*#{br}([\\s\\S]*?)#{br}?---\s*#{br}?")
+        regex = new RegExp(///^---\s*#{br}([\s\S]*?)#{br}?---\s*#{br}?///)
         front_matter_str = ctx.content.match(regex)
         front_matter = yaml.safeLoad(front_matter_str[1])
         ctx.content = ctx.content.replace(front_matter_str[0], '')
@@ -86,10 +85,10 @@ module.exports = ->
         for f, i in folders
           locals[f] ?= []
           locals = locals[f]
-          if i == folders.length-1
+          if i is folders.length - 1
             locals.push(front_matter)
             locals.all = all_fn
-            file_locals.post = locals[locals.length-1]
+            file_locals.post = locals[locals.length - 1]
 
     ###*
      * After a file in the category has been compiled, grabs the content and
@@ -103,7 +102,7 @@ module.exports = ->
 
     after_hook = (ctx) ->
       locals = ctx.file_options.post
-      locals.content = ctx.content unless locals._content == false
+      locals.content = ctx.content unless locals._content is false
 
     ###*
      * If a dynamic file has `_render` set to false in the locals, don't write
@@ -114,10 +113,10 @@ module.exports = ->
     ###
 
     write_hook = (ctx) ->
-      !(ctx.file_options.post._render == false)
+      ctx.file_options.post._render isnt false
 
     ###*
-     * Returns an array of all the dynamic conteent object in the folder
+     * Returns an array of all the dynamic content object in the folder
      * it was called on, as well as every folder nested under it, flattened
      * into a single array.
      *
