@@ -96,7 +96,7 @@ This will prevent the file from rendering and writing, since we don't need a sin
 
 ### Single Post Views
 
-Ok, so this is looking good so far, but what happens when you want to click into a blog post rather than just displaying it on the index? For this, we need a url and a layout. We can solve this quickly using jade layouts and the special `post._url` property. In the body of the file, rather than the single markdown line, we'll also include the `extends` and `block` directives, remove the `content` print on the index page, and add a link to the title pointing to `post._url`. Let's take a look, first at the modified post (assuming you have set up a layout already):
+Ok, so this is looking good so far, but what happens when you want to click into a blog post rather than just displaying it on the index? For this, we need a url and a layout. We can solve this quickly using jade layouts and the special `post._url` property. In the body of the file, rather than the single markdown line, we'll also include the `extends` and `block` directives, remove the `content` print on the index page, and add a link to the title pointing to `post._url`. Let's take a look, first at the modified post and then a sample layout for the post.
 
 ```jade
 ---
@@ -117,10 +117,34 @@ And updates to the index page:
 ```jade
 each post in site.posts.all()
   a.post
-    h2: a(href=post._url) post.title
+    h2: a(href=post._url)= post.title
     date= post.date
 ```
 
-Note that in the index page, we have removed `post.content`, as the content is going on it's own page, and would now also be surrounded by the layout. If you want a "preview" or "snippet" of the blog post, you should add that directly to the front matter. Taking a slice of the markup is usually a bad idea anyway, as you can slice in the middle of an open tag and it will mess up the rest of your page (for example, if you cut your snippet off in the middle of a bold tag before it closes, the rest of your page will be bold). For blog post snippets, you want to go with just plain text, which is better suited to the front matter than the body of the file.
+Also a sample layout for `single_post_layout.jade`
+
+```jade
+doctype html
+html
+  head
+    meta(charset='utf8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge, chrome=1')
+    meta(name='description', content='description of your site')
+    meta(name='author', content= "author of the site")
+    title= title
+    link(rel='stylesheet', href='../css/master.css')
+
+  body
+    block content
+
+    a(href='/') &laquo; back to index
+
+  //- add other scripts through require.js, not here
+  script(data-main="js/main", src="js/require.js")
+
+```
+Note that for the `extends` statement, the path is going to be relative.
+
+Also note that in the index page, we have removed `post.content`, as the content is going on it's own page, and would now also be surrounded by the layout. If you want a "preview" or "snippet" of the blog post, you should add that directly to the front matter. Taking a slice of the markup is usually a bad idea anyway, as you can slice in the middle of an open tag and it will mess up the rest of your page (for example, if you cut your snippet off in the middle of a bold tag before it closes, the rest of your page will be bold). For blog post snippets, you want to go with just plain text, which is better suited to the front matter than the body of the file.
 
 Now when we hit the url, we'll see the post rendered into a layout as it should be. You'll see the special property `post._url` as mentioned earlier, which simply prints a path to the post, including the deep-nesting if present. You might have also noticed the special `_content` key being set to false in the post file. This will just remove `post.content`, since we are no longer using it, and the full post contents with the full layout times a bunch of posts can be a very lengthy unused value. While you certainly can get away with not including this special key, if you are not planning on using `post.contents` on your index page, it's recommended that you just cut it for cleanliness and speed.
