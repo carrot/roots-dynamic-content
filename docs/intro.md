@@ -124,24 +124,10 @@ each post in site.posts.all()
 Also a sample layout for `single_post_layout.jade`
 
 ```jade
-doctype html
-html
-  head
-    meta(charset='utf8')
-    meta(http-equiv='X-UA-Compatible', content='IE=edge, chrome=1')
-    meta(name='description', content='description of your site')
-    meta(name='author', content= "author of the site")
-    title= title
-    link(rel='stylesheet', href='../css/master.css')
-
   body
     block content
 
     a(href='/') &laquo; back to index
-
-  //- add other scripts through require.js, not here
-  script(data-main="js/main", src="js/require.js")
-
 ```
 Note that for the `extends` statement, the path is going to be relative.
 
