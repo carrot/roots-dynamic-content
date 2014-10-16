@@ -29,9 +29,6 @@
     "roots": "3.x",
     "roots-util": "0.0.4"
   },
-  "peerDependencies": {
-    "roots": "3.x"
-  },
   "scripts": {
     "test": "npm run lint && mocha",
     "lint": "find lib/ -name '*.coffee' | xargs coffeelint",
