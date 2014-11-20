@@ -11,7 +11,7 @@ h         = new RootsUtil.Helpers(base: _path)
 
 compile_fixture = (fixture_name, done) ->
   @public = path.join(fixture_name, 'public')
-  h.project.compile(Roots, fixture_name, done)
+  h.project.compile(Roots, fixture_name).done(done)
 
 before (done) ->
   h.project.install_dependencies('*', done)
@@ -77,11 +77,11 @@ describe 'dynamic content', ->
 
     x._categories.length.should.eql 1
     x._categories[0].should.eql 'posts'
-    
+
     y._categories.length.should.eql 2
     y._categories[0].should.eql 'posts'
     y._categories[1].should.eql 'nested'
-    
+
     z._categories.length.should.eql 3
     z._categories[0].should.eql 'posts'
     z._categories[1].should.eql 'nested'
