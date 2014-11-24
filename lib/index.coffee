@@ -4,6 +4,7 @@ os   = require 'os'
 _    = require 'lodash'
 yaml = require 'js-yaml'
 W    = require 'when'
+helpers = require './helpers'
 
 class DynamicContent
   constructor: ->
@@ -58,12 +59,9 @@ class DynamicContent
       f = ctx.file
       roots = f.roots
 
-      # pull the front matter, remove it from the content
-      br = "\\#{os.EOL}" # cross-platform newline
-      regex = new RegExp(///^---\s*#{br}([\s\S]*?)#{br}?---\s*#{br}?///)
-      front_matter_str = ctx.content.match(regex)
-      front_matter = yaml.safeLoad(front_matter_str[1])
-      ctx.content = ctx.content.replace(front_matter_str[0], '')
+      data         = helpers.read(ctx.content)
+      front_matter = _.omit(data, 'content')
+      ctx.content  = data.content
 
       # get categories and per-compile locals, add or define site key
       folders = path.dirname(f.file.relative).split(path.sep)
@@ -133,3 +131,4 @@ class DynamicContent
     values
 
 module.exports = -> DynamicContent
+module.exports.Helpers = helpers

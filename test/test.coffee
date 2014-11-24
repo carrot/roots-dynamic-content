@@ -6,6 +6,7 @@ _         = require 'lodash'
 _path     = path.join(__dirname, 'fixtures')
 RootsUtil = require 'roots-util'
 h         = new RootsUtil.Helpers(base: _path)
+helpers   = require '../lib/helpers'
 
 # setup, teardown, and utils
 
@@ -91,3 +92,10 @@ describe 'dynamic content', ->
     p = path.join(_path, @public, 'posts/locals_test.html')
     content = JSON.parse(fs.readFileSync(p, 'utf8'))
     content.post.wow.should.eql('amaze')
+
+describe 'helpers', ->
+  describe 'readdir', ->
+    it 'should load dynamic content files in the directory', (done) ->
+      helpers.readdir(path.join(_path, 'basic', 'posts')).then (res) ->
+        console.log(res)
+        done()
