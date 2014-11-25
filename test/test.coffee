@@ -115,3 +115,7 @@ describe 'helpers', ->
       res = helpers.read(test)
       res.test.should.eql 'foo'
       res.content.should.eql 'sweet content\n'
+
+    it "should return false if it's not formatted as dynamic content", ->
+      test = "this ain't dynamic content doge"
+      res = helpers.read(test).should.eql false
