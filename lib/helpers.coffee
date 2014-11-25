@@ -16,19 +16,22 @@ _      = require 'lodash'
  * @return {Boolean} promise returning true or false
 ###
 
-detect = (path) ->
+detect = (str) ->
+  if str.split(os.EOL.substring(0,1))[0] == '---' then true else false
+
+detect_file = (path) ->
   deferred = W.defer()
   res = false
 
   fs.createReadStream(path, encoding: 'utf-8', start: 0, end: 3)
     .on('error', deferred.reject)
     .on('end', -> deferred.resolve(res))
-    .on 'data', (data) ->
-      if data.split(os.EOL.substring(0,1))[0] is '---' then res = true
+    .on 'data', (data) -> if detect(data) then res = true
 
   return deferred.promise
 
 read = (str) ->
+  if not detect(str) then return false
   br = "\\#{os.EOL}" # cross-platform newline
   regex = new RegExp(///^---\s*#{br}([\s\S]*?)#{br}?---\s*#{br}?///)
   front_matter_str = str.match(regex)
@@ -40,7 +43,7 @@ readFile = (path) ->
   nodefn.call(fs.stat, path)
     .then (res) ->
       if res.isDirectory() then return false
-      detect(path).then (res) ->
+      detect_file(path).then (res) ->
         if not res then return false
         nodefn.call(fs.readFile, path, 'utf8').then(read)
 
@@ -53,3 +56,4 @@ module.exports =
   read: read
   readFile: readFile
   readdir: readdir
+  detect_file: detect_file

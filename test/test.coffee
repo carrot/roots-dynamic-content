@@ -95,7 +95,23 @@ describe 'dynamic content', ->
 
 describe 'helpers', ->
   describe 'readdir', ->
-    it 'should load dynamic content files in the directory', (done) ->
+    it 'should read dynamic content files in the directory', (done) ->
       helpers.readdir(path.join(_path, 'basic', 'posts')).then (res) ->
-        console.log(res)
+        test = _.find res, (e) -> e.title == 'foo'
+        test.foo.should.eql 'bar'
+        test.content.should.eql 'extends _layout\n\nblock content\n  p this is a test\n'
         done()
+
+  describe 'readFile', ->
+    it 'should read dynamic content from a single file', (done) ->
+      helpers.readFile(path.join(_path, 'basic', 'posts', 'locals_test.jade'))
+        .then (res) ->
+          res.wow.should.eql 'amaze'
+          done()
+
+  describe 'read', ->
+    it 'should read dynamic content from a string', ->
+      test = "---\ntest: 'foo'\n---\nsweet content\n"
+      res = helpers.read(test)
+      res.test.should.eql 'foo'
+      res.content.should.eql 'sweet content\n'

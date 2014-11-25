@@ -13,34 +13,12 @@ class DynamicContent
   fs: ->
     extract: true
     ordered: true
-    detect: detect_fn
+    detect: (f) -> helpers.detect_file(f.path)
 
   compile_hooks: ->
     before_pass: before_hook.bind(@)
     after_file: after_hook.bind(@)
     write: write_hook.bind(@)
-
-  ###*
-   * Read the first three bytes of each file, if they are '---', assume
-   * that we're working with dynamic content.
-   *
-   * @private
-   *
-   * @param  {File} file - vinyl-wrapped file instance
-   * @return {Boolean} promise returning true or false
-  ###
-
-  detect_fn = (file) ->
-    deferred = W.defer()
-    res = false
-
-    fs.createReadStream(file.path, encoding: 'utf-8', start: 0, end: 3)
-      .on('error', deferred.reject)
-      .on('end', -> deferred.resolve(res))
-      .on 'data', (data) ->
-        if data.split(os.EOL.substring(0,1))[0] is '---' then res = true
-
-    return deferred.promise
 
   ###*
    * For dynamic files before the last compile pass:
