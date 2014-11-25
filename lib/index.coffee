@@ -4,6 +4,7 @@ os   = require 'os'
 _    = require 'lodash'
 yaml = require 'js-yaml'
 W    = require 'when'
+helpers = require './helpers'
 
 class DynamicContent
   constructor: ->
@@ -12,34 +13,12 @@ class DynamicContent
   fs: ->
     extract: true
     ordered: true
-    detect: detect_fn
+    detect: (f) -> helpers.detect_file(f.path)
 
   compile_hooks: ->
     before_pass: before_hook.bind(@)
     after_file: after_hook.bind(@)
     write: write_hook.bind(@)
-
-  ###*
-   * Read the first three bytes of each file, if they are '---', assume
-   * that we're working with dynamic content.
-   *
-   * @private
-   *
-   * @param  {File} file - vinyl-wrapped file instance
-   * @return {Boolean} promise returning true or false
-  ###
-
-  detect_fn = (file) ->
-    deferred = W.defer()
-    res = false
-
-    fs.createReadStream(file.path, encoding: 'utf-8', start: 0, end: 3)
-      .on('error', deferred.reject)
-      .on('end', -> deferred.resolve(res))
-      .on 'data', (data) ->
-        if data.split(os.EOL.substring(0,1))[0] is '---' then res = true
-
-    return deferred.promise
 
   ###*
    * For dynamic files before the last compile pass:
@@ -58,12 +37,9 @@ class DynamicContent
       f = ctx.file
       roots = f.roots
 
-      # pull the front matter, remove it from the content
-      br = "\\#{os.EOL}" # cross-platform newline
-      regex = new RegExp(///^---\s*#{br}([\s\S]*?)#{br}?---\s*#{br}?///)
-      front_matter_str = ctx.content.match(regex)
-      front_matter = yaml.safeLoad(front_matter_str[1])
-      ctx.content = ctx.content.replace(front_matter_str[0], '')
+      data         = helpers.read(ctx.content)
+      front_matter = _.omit(data, 'content')
+      ctx.content  = data.content
 
       # get categories and per-compile locals, add or define site key
       folders = path.dirname(f.file.relative).split(path.sep)
@@ -133,3 +109,4 @@ class DynamicContent
     values
 
 module.exports = -> DynamicContent
+module.exports.Helpers = helpers
