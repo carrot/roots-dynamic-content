@@ -11,7 +11,7 @@ Require the helpers module from the extension:
 helpers = require('dynamic-content').Helpers
 ```
 
-> **Note:** These helpers use a couple bit of logic from the main extension to parse dynamic content files. **However**, these helpers do not add additional features provided through roots such as the `_url` key, nor is any content below the front matter compiled.
+> **Note:** These helpers use a couple bits of logic from the main extension to parse dynamic content files. **However**, these helpers do not add additional features provided through roots such as the `_url` key, nor is any content below the front matter compiled.
 
 ### helpers.readdir
 
