@@ -93,6 +93,16 @@ describe 'dynamic content', ->
     content = JSON.parse(fs.readFileSync(p, 'utf8'))
     content.post.wow.should.eql('amaze')
 
+describe 'write_json', ->
+
+  before (done) -> compile_fixture.call(@, 'write_json', -> done())
+
+  it 'should write content to json file if specified', (done) ->
+    p = path.join(@public, 'content.json')
+    h.file.exists(p).should.be.ok
+    h.file.contains_match(p, /another test/).should.be.ok
+    done()
+
 describe 'helpers', ->
   describe 'readdir', ->
     it 'should read dynamic content files in the directory', (done) ->

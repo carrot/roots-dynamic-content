@@ -134,3 +134,24 @@ Note that for the `extends` statement, the path is going to be relative.
 Also note that in the index page, we have removed `post.content`, as the content is going on it's own page, and would now also be surrounded by the layout. If you want a "preview" or "snippet" of the blog post, you should add that directly to the front matter. Taking a slice of the markup is usually a bad idea anyway, as you can slice in the middle of an open tag and it will mess up the rest of your page (for example, if you cut your snippet off in the middle of a bold tag before it closes, the rest of your page will be bold). For blog post snippets, you want to go with just plain text, which is better suited to the front matter than the body of the file.
 
 Now when we hit the url, we'll see the post rendered into a layout as it should be. You'll see the special property `post._url` as mentioned earlier, which simply prints a path to the post, including the deep-nesting if present. You might have also noticed the special `_content` key being set to false in the post file. This will just remove `post.content`, since we are no longer using it, and the full post contents with the full layout times a bunch of posts can be a very lengthy unused value. While you certainly can get away with not including this special key, if you are not planning on using `post.contents` on your index page, it's recommended that you just cut it for cleanliness and speed.
+
+### Exporting Dynamic Content as JSON
+
+For some use cases, you may want to have your dynamic content available to be accessed by javascript in reaction to a user's action. For example, you might want to load your first five blog posts onto the index, but wait until the user hits "next page" to load in the rest. There are two ways you can do this.
+
+First, you can just stringify the `site` object into a script tag, and use it from there. It would look something like this, in jade:
+
+```jade
+p here's my great page
+script!= "window.dynamic_content = " + JSON.stringify(site)
+```
+
+In other situations, this might not make the cut -- for example if you are trying to access other dynamic content from within a single piece of dynamic content, all of the other ones might not be finished rendering when that particular one renders, so you can't guarantee they will all be present. For use cases like this, you can simply have this extension export all dynamic content to a JSON file that you can then pull with javascript. To do this, just pass a `write` key to the extension's initialization with the value being a path you want to write the json to (written relative to the public folder). So, for example:
+
+```
+extensions: [
+  dynamic_content(write: 'content.json')
+]
+```
+
+This would write all your dynamic content to `public/content.json` whenever the project compiles.

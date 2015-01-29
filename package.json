@@ -19,14 +19,14 @@
     "when": "3.x"
   },
   "devDependencies": {
-    "coffee-script": "1.7.x",
-    "mocha": "*",
+    "coffee-script": "1.8.x",
+    "mocha": "2.x",
     "should": "*",
     "coffeelint": "*",
     "istanbul": "*",
     "mocha-lcov-reporter": "*",
     "coveralls": "*",
-    "roots": "3.0.0-rc.10",
+    "roots": "3.x",
     "roots-util": "0.1.x"
   },
   "scripts": {
