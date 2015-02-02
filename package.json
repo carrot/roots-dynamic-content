@@ -19,7 +19,7 @@
     "when": "3.x"
   },
   "devDependencies": {
-    "coffee-script": "1.8.x",
+    "coffee-script": "1.9.x",
     "mocha": "2.x",
     "should": "*",
     "coffeelint": "*",
