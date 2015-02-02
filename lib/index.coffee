@@ -85,10 +85,22 @@ module.exports = (opts = {}) ->
       locals = ctx.file_options.post
       locals.content = ctx.content unless locals._content is false
 
+    ###*
+     * After the category has finished, if the user has chosen to have all
+     * dynamic content written as json, make that happen. This can only happen
+     * if a `write` option has been provided with an `output` key. Also can
+     * optionally contain `flattened` and `keys` keys, which reformat or filter
+     * the data in a certain way.
+     *
+     * @param  {Object} ctx - roots context
+    ###
     after_category = (ctx) ->
-      if opts.write
-        destination = path.join(ctx.roots.config.output_path(), opts.write)
-        fs.writeFileSync(destination, JSON.stringify(@all_content))
+      opt = opts.write
+
+      if opt
+        content = reformat(@all_content)
+        if typeof opt is 'string' then return write_json(ctx, opt, content)
+        write_json(ctx, k, filter(content, v)) for k, v of opt
 
     ###*
      * If a dynamic file has `_render` set to false in the locals, don't write
@@ -121,3 +133,28 @@ module.exports = (opts = {}) ->
       values
 
 module.exports.Helpers = helpers
+
+# private
+
+reformat = (data) ->
+  output = {}
+  for item in data
+    pointer = output
+    for level in item._categories
+      pointer[level] ?= {}
+      pointer[level]['items'] ?= []
+      pointer = pointer[level]
+    delete item._categories
+    pointer.items.push(item)
+  return output
+
+filter = (data, keys) ->
+  keys = keys.split('/')
+  pointer = data
+  for key in keys
+    pointer = pointer[key]
+  return pointer
+
+write_json = (ctx, relative_path, content) ->
+  destination = path.join(ctx.roots.config.output_path(), relative_path)
+  fs.writeFileSync(destination, JSON.stringify(content))

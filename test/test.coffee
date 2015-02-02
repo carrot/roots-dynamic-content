@@ -101,6 +101,18 @@ describe 'write_json', ->
     p = path.join(@public, 'content.json')
     h.file.exists(p).should.be.ok
     h.file.contains_match(p, /another test/).should.be.ok
+    h.file.contains_match(p, /_categories/).should.not.be.ok
+    done()
+
+describe 'json_keys', ->
+
+  before (done) -> compile_fixture.call(@, 'json_keys', -> done())
+
+  it 'should write content to json file if specified', (done) ->
+    p = path.join(@public, 'content.json')
+    h.file.exists(p).should.be.ok
+    h.file.contains_match(p, /another test/).should.not.be.ok
+    h.file.contains_match(p, /nested test/).should.be.ok
     done()
 
 describe 'helpers', ->

@@ -14,7 +14,7 @@
   },
   "main": "lib",
   "dependencies": {
-    "lodash": "2.x",
+    "lodash": "3.x",
     "js-yaml": "3.x",
     "when": "3.x"
   },

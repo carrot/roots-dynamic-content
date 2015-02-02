@@ -155,3 +155,42 @@ extensions: [
 ```
 
 This would write all your dynamic content to `public/content.json` whenever the project compiles.
+
+It should also be noted that content is slightly reformatted when written as json to maintain nesting correctly. So if you have two folders nested inside of each other, each with a few items inside them, the json output might look like this:
+
+```json
+{
+  "posts": {
+    "items": [
+      { 
+        "title": "test",
+        "_url":"/posts/test.html",
+        "content":"<p>wow</p>"
+      }, {
+        "title": "second test",
+        "_url":"/posts/test2.html",
+        "content":"<p>amaze</p>"
+      }
+    ],
+    "nested_posts": {
+      "items": ["..."]
+    }
+  }
+}
+```
+
+So you can see here that each nesting level is accessed by name within the previous level, and the items for each level can be accessed through the `items` key, which is always an array of items at that level of nesting, if there are any present.
+
+There are two more features to writing json to be discussed. First, you can specify which folders you want to be written, even if they are deep nested, and second, you can write multiple json files for different folders. If you pass an object to the `write` key instead of a string, you can get multiple outputs by key, as such:
+
+```coffee
+extensions: [dynamic(write: { 'posts.json': 'posts', 'press.json': 'press' })]
+```
+
+This config would write two different files, one for the `posts` folder as `posts.json` and one for the `press` folder as `press.json`. You can get even more specific than this, by drilling down to nested groups. For example:
+
+```coffee
+extensions: [dynamic(write: { 'welcomes.json': 'posts/welcome' })]
+```
+
+This would write a `welcomes.json` file with just the contents of the `welcome` folder nested inside the `posts` folder. You can nest as deep as you need, just separate by a slash.
