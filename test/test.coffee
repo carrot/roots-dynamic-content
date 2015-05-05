@@ -138,6 +138,28 @@ describe 'helpers', ->
       res.test.should.eql 'foo'
       res.content.should.eql 'sweet content\n'
 
+    it 'should read front matter from a string without content and no newline at the end with windows style line endings', ->
+      test = "---\r\ntest: 'foo'\r\n---"
+      res = helpers.read(test)
+      res.test.should.eql 'foo'
+      res.content.should.eql ''
+
+    it 'should read dynamic content regardless of newline style', ->
+      test = "---\ntest: 'foo'\n---\nsweet content\n"
+      res = helpers.read(test)
+      res.test.should.eql 'foo'
+      res.content.should.eql 'sweet content\n'
+	  
+      test = "---\r\ntest: 'foo'\r\n---\r\nsweet content\r\n"
+      res = helpers.read(test)
+      res.test.should.eql 'foo'
+      res.content.should.eql 'sweet content\r\n'
+	  
+      test = "---\rtest: 'foo'\r---\rsweet content\r"
+      res = helpers.read(test)
+      res.test.should.eql 'foo'
+      res.content.should.eql 'sweet content\r'
+
     it "should return false if it's not formatted as dynamic content", ->
       test = "this ain't dynamic content doge"
       res = helpers.read(test).should.eql false

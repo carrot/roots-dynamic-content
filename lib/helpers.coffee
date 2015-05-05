@@ -2,9 +2,12 @@ fs     = require 'fs'
 path   = require 'path'
 W      = require 'when'
 nodefn = require 'when/node'
-os     = require 'os'
 yaml   = require 'js-yaml'
 _      = require 'lodash'
+
+BR = "(?:\\\r\\\n|\\\n|\\\r)" # cross-platform newline
+LINEBREAK_REGEXP = new RegExp(BR)
+FRONTMATTER_REGEXP = new RegExp(///^---\s*#{BR}([\s\S]*?)#{BR}?---\s*#{BR}?///)
 
 ###*
  * Read the first three bytes of each file, if they are '---', assume
@@ -17,7 +20,7 @@ _      = require 'lodash'
 ###
 
 detect = (str) ->
-  if str.split(os.EOL.substring(0,1))[0] == '---' then true else false
+  if str.split(LINEBREAK_REGEXP)[0] == '---' then true else false
 
 detect_file = (path) ->
   deferred = W.defer()
@@ -32,9 +35,7 @@ detect_file = (path) ->
 
 read = (str) ->
   if not detect(str) then return false
-  br = "\\#{os.EOL}" # cross-platform newline
-  regex = new RegExp(///^---\s*#{br}([\s\S]*?)#{br}?---\s*#{br}?///)
-  front_matter_str = str.match(regex)
+  front_matter_str = str.match(FRONTMATTER_REGEXP)
   data = yaml.safeLoad(front_matter_str[1])
   data.content = str.replace(front_matter_str[0], '')
   return data
