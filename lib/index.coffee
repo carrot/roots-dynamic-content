@@ -1,9 +1,6 @@
 path = require 'path'
 fs   = require 'fs'
-os   = require 'os'
 _    = require 'lodash'
-yaml = require 'js-yaml'
-W    = require 'when'
 helpers = require './helpers'
 
 module.exports = (opts = {}) ->
