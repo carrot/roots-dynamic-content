@@ -53,6 +53,7 @@ module.exports = (opts = {}) ->
         front_matter._categories = folders
         front_matter._url = roots.config.out(f.file, ctx.adapter.output)
                               .replace(roots.config.output_path(), '')
+                              .replace(new RegExp('\\' + path.sep, 'g'), '/')
 
         # deep nested dynamic content
         # - make sure the backtraced path to a deep-nested folder exists
