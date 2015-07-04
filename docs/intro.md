@@ -1,7 +1,7 @@
 Roots Dynamic Content
 =====================
 
-Dynamic content is an officially maintained extension of roots that adds a large chunk of additional functionality, allowing users to manage static content in a dyamic and powerful fashion.
+Dynamic content is an officially maintained extension of roots that adds a large chunk of additional functionality, allowing users to manage static content in a dynamic and powerful fashion.
 
 ### Getting Started
 
