@@ -194,3 +194,7 @@ extensions: [dynamic(write: { 'welcomes.json': 'posts/welcome' })]
 ```
 
 This would write a `welcomes.json` file with just the contents of the `welcome` folder nested inside the `posts` folder. You can nest as deep as you need, just separate by a slash.
+
+### For non-english text writer
+
+If you write non-english text content and save it by Notepad, it might not appear at all in your blog or website. There are some reasons. Firstly, Notepad always add BOM when you save as UTF-8. Secondly, Roots-dynamic-content can not handle UTF-8 with BOM. Therefore, you have to use another text editor(eg.Notepad2,mEditor,EmEditor,FooEditor etc...) to save as UTF-8 without BOM.
